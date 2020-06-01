@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.project.manager.mapper.HNewsMapper">
+    
+    <resultMap type="HNews" id="HNewsResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+    </resultMap>
+
+    <sql id="selectHNewsVo">
+        select id, title, content from h_news
+    </sql>
+
+    <select id="selectHNewsList" parameterType="HNews" resultMap="HNewsResult">
+        <include refid="selectHNewsVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+        </where>
+    </select>
+    
+    <select id="selectHNewsById" parameterType="Long" resultMap="HNewsResult">
+        <include refid="selectHNewsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHNews" parameterType="HNews">
+        insert into h_news
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="title != null  and title != ''">title,</if>
+            <if test="content != null  and content != ''">content,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHNews" parameterType="HNews">
+        update h_news
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHNewsById" parameterType="Long">
+        delete from h_news where id = #{id}
+    </delete>
+
+    <delete id="deleteHNewsByIds" parameterType="String">
+        delete from h_news where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

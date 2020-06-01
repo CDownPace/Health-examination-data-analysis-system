@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.project.manager.mapper.HReportMapper">
+
+    <resultMap type="HReport" id="HReportResult">
+        <result property="id" column="id"/>
+        <result property="uid" column="uid"/>
+        <result property="smoke" column="smoke"/>
+        <result property="sleep" column="sleep"/>
+        <result property="bloodPressureHigh" column="blood_pressure_high"/>
+        <result property="bloodPressureLow" column="blood_pressure_low"/>
+        <result property="alcohol" column="alcohol"/>
+        <result property="date" column="date"/>
+        <result property="diary" column="diary"/>
+    </resultMap>
+
+    <sql id="selectHReportVo">
+        select id, uid, smoke, sleep, blood_pressure_high, blood_pressure_low, alcohol, diary, date from h_report
+    </sql>
+
+    <select id="selectHReportList" parameterType="HReport" resultMap="HReportResult">
+        <include refid="selectHReportVo"/>
+        <where>
+            <if test="uid != null ">and uid = #{uid}</if>
+            <if test="smoke != null ">and smoke = #{smoke}</if>
+            <if test="sleep != null ">and sleep = #{sleep}</if>
+            <if test="bloodPressureHigh != null ">and blood_pressure_high = #{bloodPressureHigh}</if>
+            <if test="bloodPressureLow != null ">and blood_pressure_low = #{bloodPressureLow}</if>
+            <if test="alcohol != null ">and alcohol = #{alcohol}</if>
+            <if test="date != null ">and date = #{date}</if>
+            <if test="diary != null and diary != ''">and diary = #{diary}</if>
+        </where>
+    </select>
+
+    <select id="selectHReportById" parameterType="Long" resultMap="HReportResult">
+        <include refid="selectHReportVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHReport" parameterType="HReport">
+        insert into h_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="uid != null ">uid,</if>
+            <if test="smoke != null ">smoke,</if>
+            <if test="sleep != null ">sleep,</if>
+            <if test="bloodPressureHigh != null ">blood_pressure_high,</if>
+            <if test="bloodPressureLow != null ">blood_pressure_low,</if>
+            <if test="alcohol != null ">alcohol,</if>
+            <if test="date != null ">date,</if>
+            <if test="diary != null and diary != ''">diary,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="uid != null ">#{uid},</if>
+            <if test="smoke != null ">#{smoke},</if>
+            <if test="sleep != null ">#{sleep},</if>
+            <if test="bloodPressureHigh != null ">#{bloodPressureHigh},</if>
+            <if test="bloodPressureLow != null ">#{bloodPressureLow},</if>
+            <if test="alcohol != null ">#{alcohol},</if>
+            <if test="date != null ">#{date},</if>
+            <if test="diary != null and diary != ''">#{diary},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHReport" parameterType="HReport">
+        update h_report
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uid != null ">uid = #{uid},</if>
+            <if test="smoke != null ">smoke = #{smoke},</if>
+            <if test="sleep != null ">sleep = #{sleep},</if>
+            <if test="bloodPressureHigh != null ">blood_pressure_high = #{bloodPressureHigh},</if>
+            <if test="bloodPressureLow != null ">blood_pressure_low = #{bloodPressureLow},</if>
+            <if test="alcohol != null ">alcohol = #{alcohol},</if>
+            <if test="date != null ">date = #{date},</if>
+            <if test="diary != null and diary != ''">diary = #{diary}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHReportById" parameterType="Long">
+        delete from h_report where id = #{id}
+    </delete>
+
+    <delete id="deleteHReportByIds" parameterType="String">
+        delete from h_report where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectRecentWeekHReportList" parameterType="HReport" resultMap="HReportResult">
+        <include refid="selectHReportVo"/>
+        <where>
+            <if test="uid != null ">uid = #{uid}</if>
+            AND date &gt;= DATE(NOW()) - INTERVAL 7 DAY
+        </where>
+    </select>
+
+</mapper>

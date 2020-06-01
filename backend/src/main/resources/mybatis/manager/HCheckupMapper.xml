@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.project.manager.mapper.HCheckupMapper">
+
+    <resultMap type="HCheckup" id="HCheckupResult">
+        <result property="id" column="id"/>
+        <result property="uid" column="uid"/>
+        <result property="height" column="height"/>
+        <result property="weight" column="weight"/>
+        <result property="bloodPressureHigh" column="blood_pressure_high"/>
+        <result property="bloodPressureLow" column="blood_pressure_low"/>
+        <result property="bloodSugar" column="blood_sugar"/>
+        <result property="date" column="date"/>
+    </resultMap>
+
+    <resultMap type="HResponseStatistic" id="HResponseStatistic">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="age" column="age"/>
+        <result property="sex" column="sex"/>
+        <result property="height" column="height"/>
+        <result property="weight" column="weight"/>
+        <result property="bloodPressureHigh" column="blood_pressure_high"/>
+        <result property="bloodPressureLow" column="blood_pressure_low"/>
+        <result property="bloodSugar" column="blood_sugar"/>
+        <result property="checkupDate" column="checkup_date"/>
+    </resultMap>
+
+    <sql id="selectHCheckupVo">
+        select id, uid, height, weight, blood_pressure_high, blood_pressure_low, blood_sugar, date from h_checkup
+    </sql>
+
+    <select id="selectHCheckupList" parameterType="HCheckup" resultMap="HCheckupResult">
+        <include refid="selectHCheckupVo"/>
+        <where>
+            <if test="uid != null ">and uid = #{uid}</if>
+            <if test="height != null ">and height = #{height}</if>
+            <if test="weight != null ">and weight = #{weight}</if>
+            <if test="bloodPressureHigh != null ">and blood_pressure_high = #{bloodPressureHigh}</if>
+            <if test="bloodPressureLow != null ">and blood_pressure_low = #{bloodPressureLow}</if>
+            <if test="bloodSugar != null ">and blood_sugar = #{bloodSugar}</if>
+            <if test="date != null ">and date = #{date}</if>
+        </where>
+    </select>
+
+    <select id="selectHCheckupById" parameterType="Long" resultMap="HCheckupResult">
+        <include refid="selectHCheckupVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHCheckup" parameterType="HCheckup">
+        insert into h_checkup
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="uid != null ">uid,</if>
+            <if test="height != null ">height,</if>
+            <if test="weight != null ">weight,</if>
+            <if test="bloodPressureHigh != null ">blood_pressure_high,</if>
+            <if test="bloodPressureLow != null ">blood_pressure_low,</if>
+            <if test="bloodSugar != null ">blood_sugar,</if>
+            <if test="date != null ">date,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="uid != null ">#{uid},</if>
+            <if test="height != null ">#{height},</if>
+            <if test="weight != null ">#{weight},</if>
+            <if test="bloodPressureHigh != null ">#{bloodPressureHigh},</if>
+            <if test="bloodPressureLow != null ">#{bloodPressureLow},</if>
+            <if test="bloodSugar != null ">#{bloodSugar},</if>
+            <if test="date != null ">#{date},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHCheckup" parameterType="HCheckup">
+        update h_checkup
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uid != null ">uid = #{uid},</if>
+            <if test="height != null ">height = #{height},</if>
+            <if test="weight != null ">weight = #{weight},</if>
+            <if test="bloodPressureHigh != null ">blood_pressure_high = #{bloodPressureHigh},</if>
+            <if test="bloodPressureLow != null ">blood_pressure_low = #{bloodPressureLow},</if>
+            <if test="bloodSugar != null ">blood_sugar = #{bloodSugar},</if>
+            <if test="date != null ">date = #{date},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHCheckupById" parameterType="Long">
+        delete from h_checkup where id = #{id}
+    </delete>
+
+    <delete id="deleteHCheckupByIds" parameterType="String">
+        delete from h_checkup where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getStatistic" parameterType="Long" resultMap="HResponseStatistic">
+--         SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));
+        SELECT su.user_id, su.user_name, hc.height, su.age, su.sex,
+        hc.weight, MAX(DATE(hc.date)) AS checkup_date,
+        hc.blood_pressure_high, hc.blood_pressure_low, hc.blood_sugar
+        FROM sys_user su
+        LEFT JOIN h_checkup hc ON hc.uid = su.user_id
+        GROUP BY su.user_id
+        <where>
+            <if test="userId != null">su.user_id = #{userId}</if>
+        </where>
+
+    </select>
+
+</mapper>
