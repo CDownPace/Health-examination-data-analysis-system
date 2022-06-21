@@ -33,7 +33,7 @@
         <poi.version>3.17</poi.version>
         <oshi.version>3.9.1</oshi.version>
         <velocity.version>1.7</velocity.version>
-        <mysql-connector.version>8.0.19</mysql-connector.version>
+        <mysql-connector.version>8.0.28</mysql-connector.version>
         <mybatis-plus.version>3.3.1</mybatis-plus.version>
         <lombok.version>1.18.12</lombok.version>
     </properties>
